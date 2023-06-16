@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Classroom</title>
+    <link rel="icon" type="image/x-icon" href="./icon.png" />
+    <style>
+      iframe {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        pointer-events: none;
+        z-index: 2;
+      }
+
+      body {
+        
+      }
+
+      .input-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 3;
+      }
+
+      .input1 {
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 30vh;
+        text-align: center;
+      }
+
+      .input1 {
+        margin-right: 10px;
+      }
+    </style>
+    <script>
+      var iframeEnabled = false;
+      var siteLoaded = false;
+
+      function getSite() {
+        if (siteLoaded) {
+          return;
+        }
+
+        var input = document.querySelector(".input1").value.trim();
+        var url = "";
+
+        if (input.startsWith("http://") || input.startsWith("https://")) {
+          url = input;
+        } else {
+          url = "https://www.google.com/search?q=" + encodeURIComponent(input);
+        }
+
+        var frame = document.querySelector("iframe");
+        frame.src = "/web/_" + btoa(url) + "_/";
+        iframeEnabled = true;
+        enableIframeSelection();
+        hideInputAndButton();
+        siteLoaded = true;
+        
+        var loadingGif = document.getElementById('loadingGif');
+        loadingGif.style.display = 'block';
+
+        frame.addEventListener('load', function() {
+          loadingGif.style.display = 'none';
+        });
+      }
+
+      function disableIframeSelection() {
+        if (!iframeEnabled) {
+          return false;
+        }
+      }
+
+      function enableIframeSelection() {
+        var frame = document.querySelector("iframe");
+        frame.style.pointerEvents = "auto";
+        frame.style.userSelect = "auto";
+      }
+
+      function hideInputAndButton() {
+        var inputContainer = document.querySelector(".input-container");
+        inputContainer.style.display = "none";
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var inputField = document.querySelector(".input1");
+        inputField.addEventListener("keydown", function (event) {
+          if (event.key === "Enter") {
+            getSite();
+          }
+        });
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <div>
+        <div class="input-container">
+          <input class="input1" type="url"/>
+        </div>
+      </div>
+    </div>
+    <div id="loadingGif" style="
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  display: none;
+">
+  <img src="https://cdn.glitch.global/22313fdd-fb94-415e-b726-f0b5757343aa/gif.gif?v=1686879616614" style="max-width: 100%; max-height: 100%;" />
+</div>
+
+    <iframe
+      onselectstart="return disableIframeSelection();"
+      style="
+        position: fixed;
+        bottom: 0%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        z-index: 0;
+      "
+    ></iframe>
+    <script>
+      document.querySelector(".mbutton").addEventListener("click", getSite);
+    </script>
+  </body>
+</html>
